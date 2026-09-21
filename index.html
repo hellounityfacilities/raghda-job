@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Al Raghda — Quote-to-Cash</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Public+Sans:wght@400;600;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap">
+<style>
+:root{--bg:#F3F2EE;--panel:#fff;--ink:#1B1F2A;--ink2:#5B6170;--line:#DDDCD6;--accent:#E0322B;--green:#1F7A45;--amber:#B8860B;--blue:#2C5F9E;--side:#1B1F2A}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Public Sans',Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+body[dir=rtl]{font-family:'Noto Kufi Arabic','Public Sans',sans-serif}
+h1,h2,h3{font-family:'Oswald','Trebuchet MS',sans-serif;margin:0;font-weight:600}
+body[dir=rtl] h1,body[dir=rtl] h2,body[dir=rtl] h3{font-family:'Noto Kufi Arabic',sans-serif}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;font-family:'Oswald',sans-serif;font-size:20px}
+.logo i{width:14px;height:14px;background:var(--accent);border-radius:3px;display:inline-block}
+.navbtn{background:none;border:0;color:#fff;opacity:.75;text-align:start;padding:10px 12px;border-radius:8px;font:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.navbtn:hover{opacity:1;background:#ffffff14}
+.navbtn.active{opacity:1;background:var(--accent)}
+.navbtn .badge{background:#ffffff33;border-radius:999px;padding:1px 8px;font-size:12px}
+aside .spacer{flex:1}
+.langbtn{border:1px solid #ffffff55;background:none;color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit}
+main{padding:22px 28px;display:grid;gap:18px;align-content:start}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar h1{font-size:28px}
+.btn{border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;background:#e9e8e3;color:var(--ink)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.kpis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;border-inline-start:5px solid var(--accent)}
+.kpi .v{font-family:'Oswald',sans-serif;font-size:32px;line-height:1}
+.kpi .l{color:var(--ink2);font-size:13px;margin-top:6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel h2{font-size:20px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:start;color:var(--ink2);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--line)}
+body[dir=rtl] th{letter-spacing:0}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:hover td{background:#faf9f5}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:#e9e8e3}
+.tag.new{background:#E3ECF7;color:var(--blue)}.tag.quoted,.tag.sent{background:#FBEFD2;color:#7A5300}.tag.won,.tag.approved,.tag.paid,.tag.delivered,.tag.closed{background:#DCEFE2;color:var(--green)}.tag.lost,.tag.rejected,.tag.overdue{background:#F9DCDA;color:var(--accent)}.tag.draft{background:#eee;color:#555}.tag.partial{background:#FBEFD2;color:#7A5300}
+.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+label{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--ink2)}
+input,select,textarea{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);width:100%}
+textarea{min-height:70px}
+.modal-bg{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px;width:min(880px,100%);max-height:92vh;overflow:auto;display:grid;gap:14px}
+.modal h2{font-size:22px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.right{margin-inline-start:auto}
+.kanban{display:grid;grid-template-columns:repeat(6,minmax(180px,1fr));gap:12px;overflow-x:auto}
+.col{background:#EAE9E4;border-radius:12px;padding:10px;min-height:300px;display:grid;gap:8px;align-content:start}
+.col h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);padding:4px 6px;display:flex;justify-content:space-between}
+.card{background:#fff;border-radius:10px;padding:10px 12px;border:1px solid var(--line);cursor:pointer;display:grid;gap:4px;font-size:13px}
+.card b{font-size:14px}
+.card .m{color:var(--ink2)}
+.card.late{border-inline-start:4px solid var(--accent)}
+.lines td input,.lines td select{padding:6px 8px;font-size:13px}
+.tot{display:grid;gap:4px;justify-items:end;font-size:15px}
+.tot .big{font-family:'Oswald',sans-serif;font-size:26px}
+.muted{color:var(--ink2);font-size:13px}
+.searchbox{width:260px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.logo{width:100%}.two{grid-template-columns:1fr}main{padding:14px}}
+@media print{aside,.topbar,.noprint{display:none!important}.app{display:block}main{padding:0}.panel{border:0}}
+.doc{font-family:'Public Sans',sans-serif;display:grid;gap:14px}
+.doc .head{display:flex;justify-content:space-between;border-bottom:3px solid var(--accent);padding-bottom:10px}
+.doc h2{font-family:'Oswald',sans-serif;font-size:30px}
+.toast{position:fixed;bottom:18px;inset-inline-start:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo"><i></i><span data-t="brand">Al Raghda</span></div>
+  <div id="nav"></div>
+  <div class="spacer"></div>
+  <button class="langbtn" onclick="toggleLang()" id="langbtn">العربية</button>
+  <p class="muted" style="color:#ffffff88;font-size:12px;margin:10px 4px 0" data-t="demo">Demo build — data saved in this browser</p>
+</aside>
+<main id="main"></main>
+</div>
+<div class="modal-bg" id="modalbg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------------------------------------------------------------- i18n
+const I18N={
+ en:{brand:'Al Raghda',demo:'Demo build — data saved in this browser',dashboard:'Dashboard',enquiries:'Enquiries',quotes:'Quotes',jobs:'Jobs',invoices:'Invoices',customers:'Customers',settings:'Settings',
+  newEnq:'New enquiry',newQuote:'New quote',openEnq:'Open enquiries',pendQ:'Quotes awaiting approval',inProd:'Jobs in production',dueWeek:'Due this week',revMTD:'Revenue this month',marginMTD:'Margin this month',
+  name:'Name',company:'Company',phone:'Phone',source:'Source',need:'What they need',deadline:'Needed by',status:'Status',actions:'Actions',date:'Date',customer:'Customer',title:'Job title',total:'Total',
+  createQuote:'Create quote',save:'Save',cancel:'Cancel',delete:'Delete',print:'Print / PDF',whatsapp:'Send on WhatsApp',approve:'Approve → create job',markSent:'Mark sent',reject:'Reject',
+  service:'Service',material:'Material',width:'Width (m)',height:'Height (m)',qty:'Qty',rate:'Rate',line:'Line total',addLine:'Add line',subtotal:'Subtotal',discount:'Discount',vat:'VAT',installation:'Installation',
+  notes:'Notes',stage:'Stage',due:'Due',assigned:'Assigned to',machine:'Machine',actualMat:'Actual materials (QAR)',machineHrs:'Machine hours',labourHrs:'Labour hours',quoted:'Quoted',cost:'Actual cost',margin:'Margin',
+  createInv:'Create invoice',deposit:'Deposit',balance:'Balance',recordPay:'Record payment',amount:'Amount',method:'Method',cash:'Cash',card:'Card',transfer:'Bank transfer',paid:'Paid',
+  jobsCount:'Jobs',spent:'Total spent',companyName:'Company name',vatRate:'VAT rate %',labourRate:'Labour rate QAR/hr',materials:'Materials & rates',unit:'Unit',ratePer:'Rate (QAR per unit)',addMat:'Add material',machines:'Machine hourly rates',
+  recent:'Recent activity',jobsDue:'Jobs due soon',all:'All',search:'Search…',noData:'Nothing here yet.',viewQuote:'View',edit:'Edit',move:'Move to',late:'LATE',ref:'Ref',lostReason:'Lost',
+  quoteFor:'Quotation',invoiceDoc:'Tax Invoice',validity:'Valid 14 days · 50% deposit to start · balance on delivery',thanks:'Thank you for your business.',
+  stages:['Design','Approval','Production','Installation','Delivered','Closed'],sources:['Google','Instagram','WhatsApp','Walk-in','Referral','LinkedIn'],units:['sqm','piece','hour','lm'],
+  st:{New:'New',Quoted:'Quoted',Won:'Won',Lost:'Lost',Draft:'Draft',Sent:'Sent',Approved:'Approved',Rejected:'Rejected',Unpaid:'Unpaid',Partial:'Partial',Paid:'Paid'}},
+ ar:{brand:'الرغدة',demo:'نسخة تجريبية — البيانات محفوظة في هذا المتصفح',dashboard:'لوحة التحكم',enquiries:'الاستفسارات',quotes:'عروض الأسعار',jobs:'الأعمال',invoices:'الفواتير',customers:'العملاء',settings:'الإعدادات',
+  newEnq:'استفسار جديد',newQuote:'عرض سعر جديد',openEnq:'استفسارات مفتوحة',pendQ:'عروض بانتظار الموافقة',inProd:'أعمال قيد الإنتاج',dueWeek:'تسليم هذا الأسبوع',revMTD:'إيرادات الشهر',marginMTD:'هامش الشهر',
+  name:'الاسم',company:'الشركة',phone:'الهاتف',source:'المصدر',need:'المطلوب',deadline:'الموعد المطلوب',status:'الحالة',actions:'إجراءات',date:'التاريخ',customer:'العميل',title:'عنوان العمل',total:'الإجمالي',
+  createQuote:'إنشاء عرض سعر',save:'حفظ',cancel:'إلغاء',delete:'حذف',print:'طباعة / PDF',whatsapp:'إرسال عبر واتساب',approve:'اعتماد ← إنشاء عمل',markSent:'تم الإرسال',reject:'رفض',
+  service:'الخدمة',material:'الخامة',width:'العرض (م)',height:'الارتفاع (م)',qty:'الكمية',rate:'السعر',line:'إجمالي البند',addLine:'إضافة بند',subtotal:'المجموع الفرعي',discount:'خصم',vat:'ضريبة',installation:'التركيب',
+  notes:'ملاحظات',stage:'المرحلة',due:'التسليم',assigned:'المسؤول',machine:'الماكينة',actualMat:'تكلفة الخامات الفعلية (ر.ق)',machineHrs:'ساعات الماكينة',labourHrs:'ساعات العمل',quoted:'المعروض',cost:'التكلفة الفعلية',margin:'الهامش',
+  createInv:'إنشاء فاتورة',deposit:'دفعة مقدمة',balance:'المتبقي',recordPay:'تسجيل دفعة',amount:'المبلغ',method:'طريقة الدفع',cash:'نقداً',card:'بطاقة',transfer:'تحويل بنكي',paid:'مدفوع',
+  jobsCount:'الأعمال',spent:'إجمالي الإنفاق',companyName:'اسم الشركة',vatRate:'نسبة الضريبة %',labourRate:'أجر العمل ر.ق/ساعة',materials:'الخامات والأسعار',unit:'الوحدة',ratePer:'السعر (ر.ق لكل وحدة)',addMat:'إضافة خامة',machines:'أجرة الماكينات بالساعة',
+  recent:'آخر النشاطات',jobsDue:'أعمال قريبة التسليم',all:'الكل',search:'بحث…',noData:'لا يوجد شيء بعد.',viewQuote:'عرض',edit:'تعديل',move:'نقل إلى',late:'متأخر',ref:'المرجع',lostReason:'خسارة',
+  quoteFor:'عرض سعر',invoiceDoc:'فاتورة ضريبية',validity:'ساري 14 يوماً · دفعة مقدمة 50% للبدء · المتبقي عند التسليم',thanks:'شكراً لتعاملكم معنا.',
+  stages:['التصميم','الاعتماد','الإنتاج','التركيب','تم التسليم','مغلق'],sources:['جوجل','إنستغرام','واتساب','زيارة','توصية','لينكدإن'],units:['م²','قطعة','ساعة','م.ط'],
+  st:{New:'جديد',Quoted:'تم التسعير',Won:'تم الفوز',Lost:'خسارة',Draft:'مسودة',Sent:'مرسل',Approved:'معتمد',Rejected:'مرفوض',Unpaid:'غير مدفوع',Partial:'جزئي',Paid:'مدفوع'}}
+};
+let lang='en'; const t=k=>I18N[lang][k]??k; const ts=s=>I18N[lang].st[s]??s;
+const STAGES=['Design','Approval','Production','Installation','Delivered','Closed'];
+const SOURCES=['Google','Instagram','WhatsApp','Walk-in','Referral','LinkedIn'];
+const stageName=s=>I18N[lang].stages[STAGES.indexOf(s)]??s; const srcName=s=>I18N[lang].sources[SOURCES.indexOf(s)]??s;
+const fmt=n=>'QAR '+(Math.round(n||0)).toLocaleString('en');
+const today=()=>new Date().toISOString().slice(0,10);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const uid=()=>Math.random().toString(36).slice(2,8).toUpperCase();
+
+// ---------------------------------------------------------------- seed data
+function seed(){
+ const T=today();
+ const materials=[
+  {id:'m1',name:'Acrylic 3mm (laser)',unit:'sqm',rate:180,machine:'Laser'},{id:'m2',name:'Acrylic 5mm (laser/CNC)',unit:'sqm',rate:260,machine:'Laser'},
+  {id:'m3',name:'LED 3D letters',unit:'piece',rate:220,machine:'CNC'},{id:'m4',name:'Flex face lightbox',unit:'sqm',rate:420,machine:'CNC'},
+  {id:'m5',name:'Vinyl print (indoor)',unit:'sqm',rate:65,machine:'Digital print'},{id:'m6',name:'Vinyl print + lamination (outdoor)',unit:'sqm',rate:95,machine:'Digital print'},
+  {id:'m7',name:'One-way vision window film',unit:'sqm',rate:110,machine:'Digital print'},{id:'m8',name:'UV print on acrylic/wood',unit:'sqm',rate:240,machine:'UV printer'},
+  {id:'m9',name:'Roll-up banner 85×200',unit:'piece',rate:180,machine:'Digital print'},{id:'m10',name:'Business cards (box of 100)',unit:'piece',rate:45,machine:'Digital print'},
+  {id:'m11',name:'MDF 18mm CNC cut',unit:'sqm',rate:210,machine:'CNC'},{id:'m12',name:'Laser-engraved gift (wood/acrylic)',unit:'piece',rate:35,machine:'Laser'}];
+ const customers=[
+  {id:'c1',name:'Fahad Al-Kuwari',company:'Karak Corner Café',phone:'+974 5500 0001',source:'Instagram'},
+  {id:'c2',name:'Maria Santos',company:'Bright Smile Dental Clinic',phone:'+974 5500 0002',source:'Google'},
+  {id:'c3',name:'Ahmed Rizwan',company:'Gulf Events Co.',phone:'+974 5500 0003',source:'Referral'},
+  {id:'c4',name:'Noor Properties',company:'Noor Properties W.L.L.',phone:'+974 5500 0004',source:'LinkedIn'},
+  {id:'c5',name:'Sara Hassan',company:'—',phone:'+974 5500 0005',source:'Walk-in'}];
+ const enquiries=[
+  {id:'e1',date:addDays(T,-1),cust:'c1',need:'Facade LED sign 4m × 1m + window graphics',deadline:addDays(T,14),status:'Quoted',source:'Instagram'},
+  {id:'e2',date:addDays(T,-2),cust:'c2',need:'Reception logo (acrylic) + wayfinding signs ×6',deadline:addDays(T,21),status:'Quoted',source:'Google'},
+  {id:'e3',date:addDays(T,-3),cust:'c3',need:'Exhibition backdrop 6×3m + 10 roll-ups (48h express)',deadline:addDays(T,2),status:'Won',source:'Referral'},
+  {id:'e4',date:addDays(T,-5),cust:'c4',need:'Hoarding graphics 40 lm for Lusail site',deadline:addDays(T,30),status:'New',source:'LinkedIn'},
+  {id:'e5',date:T,cust:'c5',need:'25 laser-engraved wooden gifts for a school event',deadline:addDays(T,7),status:'New',source:'Walk-in'},
+  {id:'e6',date:addDays(T,-9),cust:'c1',need:'Menu boards ×3',deadline:addDays(T,-2),status:'Lost',source:'WhatsApp'}];
+ const quotes=[
+  {id:'Q-1041',date:addDays(T,-1),cust:'c1',enq:'e1',title:'Facade LED sign + window graphics',status:'Sent',discount:0,install:600,lines:[
+    {mat:'m3',desc:'LED 3D letters "Karak Corner" (11 letters)',w:0,h:0,qty:11},{mat:'m4',desc:'Flex face lightbox 4×1m',w:4,h:1,qty:1},{mat:'m7',desc:'One-way vision film on 2 windows',w:2.4,h:1.8,qty:2}]},
+  {id:'Q-1042',date:addDays(T,-2),cust:'c2',enq:'e2',title:'Reception logo + wayfinding',status:'Draft',discount:5,install:400,lines:[
+    {mat:'m2',desc:'Acrylic 5mm reception logo 1.2×0.6m',w:1.2,h:0.6,qty:1},{mat:'m8',desc:'UV printed wayfinding plates 0.3×0.2m',w:0.3,h:0.2,qty:6}]},
+  {id:'Q-1040',date:addDays(T,-3),cust:'c3',enq:'e3',title:'Exhibition backdrop + roll-ups (express)',status:'Approved',discount:0,install:350,lines:[
+    {mat:'m6',desc:'Backdrop 6×3m outdoor vinyl',w:6,h:3,qty:1},{mat:'m9',desc:'Roll-up banners',w:0,h:0,qty:10}]},
+  {id:'Q-1037',date:addDays(T,-12),cust:'c4',title:'Compound entrance sign',status:'Approved',discount:0,install:900,lines:[
+    {mat:'m4',desc:'Lightbox 3×0.8m',w:3,h:0.8,qty:2},{mat:'m3',desc:'LED letters',w:0,h:0,qty:14}]}];
+ const jobs=[
+  {id:'J-2031',quote:'Q-1040',cust:'c3',title:'Exhibition backdrop + roll-ups (express)',stage:'Production',due:addDays(T,2),assigned:'Rafiq',machine:'Digital print',mat:1150,machineHrs:6,labourHrs:5,notes:'Express — deliver to DECC hall 5',created:addDays(T,-3)},
+  {id:'J-2028',quote:'Q-1037',cust:'c4',title:'Compound entrance sign',stage:'Installation',due:addDays(T,1),assigned:'Sunil',machine:'CNC',mat:2400,machineHrs:9,labourHrs:14,notes:'Crane booked 7am',created:addDays(T,-12)},
+  {id:'J-2025',quote:null,cust:'c2',title:'Clinic window frosting',stage:'Delivered',due:addDays(T,-4),assigned:'Rafiq',machine:'Digital print',mat:380,machineHrs:2,labourHrs:4,notes:'',created:addDays(T,-15),total:1900},
+  {id:'J-2022',quote:null,cust:'c1',title:'Café opening banner + cards',stage:'Closed',due:addDays(T,-20),assigned:'Rafiq',machine:'Digital print',mat:210,machineHrs:1.5,labourHrs:2,notes:'',created:addDays(T,-28),total:850}];
+ const invoices=[
+  {id:'INV-501',date:addDays(T,-12),job:'J-2028',cust:'c4',total:0,payments:[{date:addDays(T,-12),amount:3000,method:'transfer'}]},
+  {id:'INV-498',date:addDays(T,-6),job:'J-2025',cust:'c2',total:1900,payments:[{date:addDays(T,-6),amount:1900,method:'card'}]},
+  {id:'INV-490',date:addDays(T,-20),job:'J-2022',cust:'c1',total:850,payments:[{date:addDays(T,-20),amount:850,method:'cash'}]}];
+ return {materials,customers,enquiries,quotes,jobs,invoices,machines:{Laser:120,CNC:150,'UV printer':140,'Digital print':80},settings:{company:'Al Raghda Advertising',vat:0,labour:45,cr:'C.R. 143132',phone:'+974 XXXX XXXX'},seq:{q:1043,j:2032,i:502}};
+}
+let S; try{S=JSON.parse(localStorage.getItem('raghda-q2c'))}catch(e){} if(!S||!S.quotes){S=seed();persist();}
+try{lang=localStorage.getItem('raghda-lang')||'en'}catch(e){}
+function persist(){try{localStorage.setItem('raghda-q2c',JSON.stringify(S))}catch(e){}}
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
+const cust=id=>S.customers.find(c=>c.id===id)||{name:'?',company:''};
+const mat=id=>S.materials.find(m=>m.id===id)||{name:'?',rate:0,unit:'piece',machine:''};
+function lineTotal(l){const m=mat(l.mat);const area=(m.unit==='sqm')?(l.w*l.h||0):1;return m.rate*area*(l.qty||0)}
+function quoteTotals(q){const sub=q.lines.reduce((a,l)=>a+lineTotal(l),0)+(+q.install||0);const disc=sub*(+q.discount||0)/100;const vat=(sub-disc)*(S.settings.vat||0)/100;return {sub,disc,vat,total:sub-disc+vat}}
+function jobQuoteTotal(j){if(j.quote){const q=S.quotes.find(x=>x.id===j.quote);if(q)return quoteTotals(q).total}return j.total||0}
+function jobCost(j){const mrate=S.machines[j.machine]||0;return (+j.mat||0)+(+j.machineHrs||0)*mrate+(+j.labourHrs||0)*(S.settings.labour||0)}
+function invPaid(i){return i.payments.reduce((a,p)=>a+(+p.amount),0)}
+function invTotal(i){if(i.total)return i.total;const j=S.jobs.find(x=>x.id===i.job);return j?jobQuoteTotal(j):0}
+function invStatus(i){const p=invPaid(i),tt=invTotal(i);return p>=tt-0.5?'Paid':p>0?'Partial':'Unpaid'}
+
+// ---------------------------------------------------------------- shell
+let view='dashboard';
+const NAV=[['dashboard'],['enquiries'],['quotes'],['jobs'],['invoices'],['customers'],['settings']];
+function toggleLang(){lang=lang==='en'?'ar':'en';try{localStorage.setItem('raghda-lang',lang)}catch(e){}render()}
+function go(v){view=v;render()}
+function render(){
+ document.body.dir=lang==='ar'?'rtl':'ltr';document.documentElement.lang=lang;
+ document.getElementById('langbtn').textContent=lang==='en'?'العربية':'English';
+ document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
+ const counts={enquiries:S.enquiries.filter(e=>e.status==='New').length,quotes:S.quotes.filter(q=>q.status==='Sent').length,jobs:S.jobs.filter(j=>!['Delivered','Closed'].includes(j.stage)).length,invoices:S.invoices.filter(i=>invStatus(i)!=='Paid').length};
+ document.getElementById('nav').innerHTML=NAV.map(([k])=>`<button class="navbtn ${view===k?'active':''}" onclick="go('${k}')"><span>${t(k)}</span>${counts[k]?`<span class="badge">${counts[k]}</span>`:''}</button>`).join('');
+ document.getElementById('main').innerHTML=VIEWS[view]();
+}
+const VIEWS={};
+
+// ---------------------------------------------------------------- dashboard
+VIEWS.dashboard=()=>{
+ const T=today(),wk=addDays(T,7),m=T.slice(0,7);
+ const openE=S.enquiries.filter(e=>e.status==='New').length, pendQ=S.quotes.filter(q=>q.status==='Sent').length;
+ const inProd=S.jobs.filter(j=>['Design','Approval','Production','Installation'].includes(j.stage)).length;
+ const dueWeek=S.jobs.filter(j=>j.due<=wk&&!['Delivered','Closed'].includes(j.stage));
+ const monthJobs=S.jobs.filter(j=>['Delivered','Closed'].includes(j.stage)&&j.due.slice(0,7)===m);
+ const rev=monthJobs.reduce((a,j)=>a+jobQuoteTotal(j),0), cost=monthJobs.reduce((a,j)=>a+jobCost(j),0);
+ const invRev=S.invoices.flatMap(i=>i.payments).filter(p=>p.date.slice(0,7)===m).reduce((a,p)=>a+ +p.amount,0);
+ return `<div class="topbar"><h1>${t('dashboard')}</h1><div class="row"><button class="btn" onclick="openEnquiry()">+ ${t('newEnq')}</button><button class="btn primary" onclick="openQuote()">+ ${t('newQuote')}</button></div></div>
+ <div class="kpis">
+  <div class="kpi"><div class="v">${openE}</div><div class="l">${t('openEnq')}</div></div>
+  <div class="kpi" style="border-color:var(--amber)"><div class="v">${pendQ}</div><div class="l">${t('pendQ')}</div></div>
+  <div class="kpi" style="border-color:var(--blue)"><div class="v">${inProd}</div><div class="l">${t('inProd')}</div></div>
+  <div class="kpi"><div class="v">${dueWeek.length}</div><div class="l">${t('dueWeek')}</div></div>
+  <div class="kpi" style="border-color:var(--green)"><div class="v">${fmt(invRev)}</div><div class="l">${t('revMTD')} (${t('paid').toLowerCase()})</div></div>
+  <div class="kpi" style="border-color:var(--green)"><div class="v">${rev?Math.round((rev-cost)/rev*100):0}%</div><div class="l">${t('marginMTD')} · ${fmt(rev-cost)}</div></div>
+ </div>
+ <div class="two">
+  <div class="panel"><h2>${t('jobsDue')}</h2><table><tr><th>${t('ref')}</th><th>${t('customer')}</th><th>${t('stage')}</th><th>${t('due')}</th></tr>
+  ${dueWeek.length?dueWeek.sort((a,b)=>a.due<b.due?-1:1).map(j=>`<tr onclick="openJob('${j.id}')" style="cursor:pointer"><td><b>${j.id}</b><br><span class="muted">${j.title}</span></td><td>${cust(j.cust).company}</td><td><span class="tag">${stageName(j.stage)}</span></td><td>${j.due} ${j.due<T?`<span class="tag overdue">${t('late')}</span>`:''}</td></tr>`).join(''):`<tr><td colspan=4 class="muted">${t('noData')}</td></tr>`}</table></div>
+  <div class="panel"><h2>${t('recent')}</h2><table>
+  ${[...S.enquiries.map(e=>({d:e.date,txt:`${t('enquiries')}: ${cust(e.cust).company||cust(e.cust).name} — ${e.need}`,s:e.status})),...S.quotes.map(q=>({d:q.date,txt:`${q.id} · ${q.title} · ${fmt(quoteTotals(q).total)}`,s:q.status}))].sort((a,b)=>a.d<b.d?1:-1).slice(0,8).map(r=>`<tr><td class="muted" style="white-space:nowrap">${r.d}</td><td>${r.txt}</td><td><span class="tag ${r.s.toLowerCase()}">${ts(r.s)}</span></td></tr>`).join('')}</table></div>
+ </div>`;
+};
+
+// ---------------------------------------------------------------- enquiries
+let enqFilter='All';
+VIEWS.enquiries=()=>{
+ const rows=S.enquiries.filter(e=>enqFilter==='All'||e.status===enqFilter).sort((a,b)=>a.date<b.date?1:-1);
+ return `<div class="topbar"><h1>${t('enquiries')}</h1><div class="row"><select style="width:auto" onchange="enqFilter=this.value;render()">${['All','New','Quoted','Won','Lost'].map(s=>`<option value="${s}" ${enqFilter===s?'selected':''}>${s==='All'?t('all'):ts(s)}</option>`).join('')}</select><button class="btn primary" onclick="openEnquiry()">+ ${t('newEnq')}</button></div></div>
+ <div class="panel"><table><tr><th>${t('date')}</th><th>${t('customer')}</th><th>${t('need')}</th><th>${t('source')}</th><th>${t('deadline')}</th><th>${t('status')}</th><th>${t('actions')}</th></tr>
+ ${rows.map(e=>{const c=cust(e.cust);return `<tr><td class="muted">${e.date}</td><td><b>${c.name}</b><br><span class="muted">${c.company} · ${c.phone}</span></td><td>${e.need}</td><td>${srcName(e.source)}</td><td>${e.deadline}</td><td><span class="tag ${e.status.toLowerCase()}">${ts(e.status)}</span></td>
+ <td class="row"><button class="btn sm" onclick="openEnquiry('${e.id}')">${t('edit')}</button>${e.status==='New'?`<button class="btn sm primary" onclick="openQuote(null,'${e.id}')">${t('createQuote')}</button>`:''}<a class="btn sm ghost" href="https://wa.me/${c.phone.replace(/\D/g,'')}" target="_blank">WA</a></td></tr>`}).join('')||`<tr><td colspan=7 class="muted">${t('noData')}</td></tr>`}</table></div>`;
+};
+function custOptions(sel){return S.customers.map(c=>`<option value="${c.id}" ${sel===c.id?'selected':''}>${c.name} — ${c.company}</option>`).join('')}
+function openEnquiry(id){
+ const e=id?S.enquiries.find(x=>x.id===id):{date:today(),cust:'',need:'',deadline:addDays(today(),14),status:'New',source:'WhatsApp'};
+ modal(`<h2>${id?t('edit'):t('newEnq')}</h2>
+ <div class="grid2">
+  <label>${t('customer')}<select id="f_cust"><option value="">+ ${t('name')}…</option>${custOptions(e.cust)}</select></label>
+  <label>${t('source')}<select id="f_src">${SOURCES.map(s=>`<option value="${s}" ${e.source===s?'selected':''}>${srcName(s)}</option>`).join('')}</select></label>
+  <label>${t('name')} (new)<input id="f_name"></label><label>${t('company')} (new)<input id="f_co"></label><label>${t('phone')} (new)<input id="f_ph" placeholder="+974"></label>
+  <label>${t('deadline')}<input type="date" id="f_dl" value="${e.deadline}"></label>
+  <label>${t('status')}<select id="f_st">${['New','Quoted','Won','Lost'].map(s=>`<option ${e.status===s?'selected':''} value="${s}">${ts(s)}</option>`).join('')}</select></label>
+ </div>
+ <label>${t('need')}<textarea id="f_need">${e.need}</textarea></label>
+ <div class="row"><button class="btn primary" onclick="saveEnquiry('${id||''}')">${t('save')}</button><button class="btn" onclick="closeModal()">${t('cancel')}</button>${id?`<button class="btn ghost right" onclick="S.enquiries=S.enquiries.filter(x=>x.id!=='${id}');persist();closeModal();render()">${t('delete')}</button>`:''}</div>`);
+}
+function ensureCustomer(){let cid=document.getElementById('f_cust').value;const n=document.getElementById('f_name').value.trim();if(!cid&&n){cid='c'+uid();S.customers.push({id:cid,name:n,company:document.getElementById('f_co').value.trim()||'—',phone:document.getElementById('f_ph').value.trim(),source:document.getElementById('f_src')?.value||'WhatsApp'})}return cid}
+function saveEnquiry(id){const cid=ensureCustomer();if(!cid)return toast('Customer required');const o={id:id||'e'+uid(),date:today(),cust:cid,need:document.getElementById('f_need').value,deadline:document.getElementById('f_dl').value,status:document.getElementById('f_st').value,source:document.getElementById('f_src').value};
+ if(id){Object.assign(S.enquiries.find(x=>x.id===id),o)}else S.enquiries.unshift(o);persist();closeModal();render();toast('✓')}
+
+// ---------------------------------------------------------------- quotes
+VIEWS.quotes=()=>`<div class="topbar"><h1>${t('quotes')}</h1><button class="btn primary" onclick="openQuote()">+ ${t('newQuote')}</button></div>
+ <div class="panel"><table><tr><th>${t('ref')}</th><th>${t('date')}</th><th>${t('customer')}</th><th>${t('title')}</th><th>${t('total')}</th><th>${t('status')}</th><th>${t('actions')}</th></tr>
+ ${S.quotes.sort((a,b)=>a.id<b.id?1:-1).map(q=>`<tr><td><b>${q.id}</b></td><td class="muted">${q.date}</td><td>${cust(q.cust).company}</td><td>${q.title}</td><td>${fmt(quoteTotals(q).total)}</td><td><span class="tag ${q.status.toLowerCase()}">${ts(q.status)}</span></td>
+ <td class="row"><button class="btn sm" onclick="openQuote('${q.id}')">${t('viewQuote')}</button><button class="btn sm ghost" onclick="printQuote('${q.id}')">${t('print')}</button></td></tr>`).join('')}</table></div>`;
+let Q; // working quote
+function openQuote(id,enqId){
+ Q=id?JSON.parse(JSON.stringify(S.quotes.find(x=>x.id===id))):{id:'Q-'+S.seq.q,date:today(),cust:enqId?S.enquiries.find(e=>e.id===enqId).cust:S.customers[0].id,enq:enqId||null,title:enqId?S.enquiries.find(e=>e.id===enqId).need:'',status:'Draft',discount:0,install:0,lines:[{mat:S.materials[0].id,desc:'',w:1,h:1,qty:1}],_new:!id};
+ renderQuoteModal();
+}
+function renderQuoteModal(){
+ const tt=quoteTotals(Q);
+ modal(`<div class="row"><h2>${Q.id} · ${t('quoteFor')}</h2><span class="tag ${Q.status.toLowerCase()} right">${ts(Q.status)}</span></div>
+ <div class="grid2"><label>${t('customer')}<select onchange="Q.cust=this.value">${custOptions(Q.cust)}</select></label><label>${t('title')}<input value="${esc(Q.title)}" oninput="Q.title=this.value"></label></div>
+ <table class="lines"><tr><th style="width:24%">${t('material')}</th><th>${t('service')} / description</th><th>${t('width')}</th><th>${t('height')}</th><th>${t('qty')}</th><th>${t('rate')}</th><th>${t('line')}</th><th></th></tr>
+ ${Q.lines.map((l,i)=>{const m=mat(l.mat);return `<tr><td><select onchange="Q.lines[${i}].mat=this.value;renderQuoteModal()">${S.materials.map(x=>`<option value="${x.id}" ${x.id===l.mat?'selected':''}>${x.name}</option>`).join('')}</select></td>
+  <td><input value="${esc(l.desc)}" oninput="Q.lines[${i}].desc=this.value"></td>
+  <td>${m.unit==='sqm'?`<input type="number" step="0.1" value="${l.w}" onchange="Q.lines[${i}].w=+this.value;renderQuoteModal()">`:'—'}</td><td>${m.unit==='sqm'?`<input type="number" step="0.1" value="${l.h}" onchange="Q.lines[${i}].h=+this.value;renderQuoteModal()">`:'—'}</td>
+  <td><input type="number" value="${l.qty}" onchange="Q.lines[${i}].qty=+this.value;renderQuoteModal()"></td><td class="muted">${m.rate}/${m.unit}</td><td><b>${fmt(lineTotal(l))}</b></td><td><button class="btn sm ghost" onclick="Q.lines.splice(${i},1);renderQuoteModal()">×</button></td></tr>`}).join('')}</table>
+ <div class="row"><button class="btn sm" onclick="Q.lines.push({mat:S.materials[0].id,desc:'',w:1,h:1,qty:1});renderQuoteModal()">+ ${t('addLine')}</button>
+  <label class="right" style="width:160px">${t('installation')} (QAR)<input type="number" value="${Q.install}" onchange="Q.install=+this.value;renderQuoteModal()"></label>
+  <label style="width:120px">${t('discount')} %<input type="number" value="${Q.discount}" onchange="Q.discount=+this.value;renderQuoteModal()"></label></div>
+ <div class="tot"><span>${t('subtotal')}: ${fmt(tt.sub)}</span>${tt.disc?`<span>${t('discount')}: −${fmt(tt.disc)}</span>`:''}${S.settings.vat?`<span>${t('vat')} ${S.settings.vat}%: ${fmt(tt.vat)}</span>`:''}<span class="big">${t('total')}: ${fmt(tt.total)}</span></div>
+ <div class="row"><button class="btn primary" onclick="saveQuote()">${t('save')}</button>
+  ${Q.status==='Draft'?`<button class="btn" onclick="Q.status='Sent';saveQuote()">${t('markSent')}</button>`:''}
+  ${['Draft','Sent'].includes(Q.status)?`<button class="btn green" onclick="approveQuote()">${t('approve')}</button><button class="btn ghost" onclick="Q.status='Rejected';saveQuote()">${t('reject')}</button>`:''}
+  <button class="btn ghost" onclick="saveQuote(true);printQuote('${Q.id}')">${t('print')}</button>
+  <a class="btn ghost" target="_blank" href="https://wa.me/${cust(Q.cust).phone.replace(/\D/g,'')}?text=${encodeURIComponent(`${S.settings.company} — ${Q.id}\n${Q.title}\n${Q.lines.map(l=>`• ${l.desc||mat(l.mat).name} ×${l.qty}: ${fmt(lineTotal(l))}`).join('\n')}\n${t('installation')}: ${fmt(Q.install)}\n${t('total')}: ${fmt(tt.total)}\n${t('validity')}`)}">${t('whatsapp')}</a>
+  <button class="btn right" onclick="closeModal()">${t('cancel')}</button></div>`);
+}
+function saveQuote(keepOpen){const i=S.quotes.findIndex(x=>x.id===Q.id);const q=JSON.parse(JSON.stringify(Q));delete q._new;if(i>=0)S.quotes[i]=q;else{S.quotes.unshift(q);S.seq.q++;}
+ if(q.enq){const e=S.enquiries.find(x=>x.id===q.enq);if(e&&e.status==='New')e.status='Quoted'}persist();if(!keepOpen){closeModal();render();toast('✓')}}
+function approveQuote(){Q.status='Approved';saveQuote(true);const q=S.quotes.find(x=>x.id===Q.id);const m=mat(q.lines[0]?.mat).machine;
+ const j={id:'J-'+S.seq.j,quote:q.id,cust:q.cust,title:q.title,stage:'Design',due:addDays(today(),10),assigned:'',machine:m,mat:0,machineHrs:0,labourHrs:0,notes:'',created:today()};S.seq.j++;S.jobs.unshift(j);
+ if(q.enq){const e=S.enquiries.find(x=>x.id===q.enq);if(e)e.status='Won'}persist();closeModal();view='jobs';render();toast(j.id+' ✓')}
+function printQuote(id){const q=S.quotes.find(x=>x.id===id);const tt=quoteTotals(q);const c=cust(q.cust);
+ document.getElementById('main').innerHTML=docHtml(t('quoteFor'),q.id,q.date,c,q.lines.map(l=>[l.desc||mat(l.mat).name,mat(l.mat).unit==='sqm'?`${l.w}×${l.h} m`:'',l.qty,fmt(lineTotal(l))]),tt,q.install,t('validity'));
+ setTimeout(()=>{window.print();render()},300)}
+function docHtml(kind,ref,date,c,rows,tt,install,foot){return `<div class="panel doc"><div class="head"><div><h2>${S.settings.company}</h2><div class="muted">${S.settings.cr} · ${S.settings.phone}</div></div><div style="text-align:end"><h2>${kind}</h2><div>${ref}<br>${date}</div></div></div>
+ <div><b>${c.name}</b><br>${c.company}<br>${c.phone}</div>
+ <table><tr><th>Description</th><th>Size</th><th>${t('qty')}</th><th>${t('total')}</th></tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}${install?`<tr><td>${t('installation')}</td><td></td><td></td><td>${fmt(install)}</td></tr>`:''}</table>
+ <div class="tot"><span>${t('subtotal')}: ${fmt(tt.sub)}</span>${tt.disc?`<span>${t('discount')}: −${fmt(tt.disc)}</span>`:''}${tt.vat?`<span>${t('vat')}: ${fmt(tt.vat)}</span>`:''}<span class="big">${t('total')}: ${fmt(tt.total)}</span></div><p class="muted">${foot}</p></div>`}
+
+// ---------------------------------------------------------------- jobs
+VIEWS.jobs=()=>{const T=today();return `<div class="topbar"><h1>${t('jobs')}</h1><span class="muted">${S.jobs.length} ${t('jobsCount').toLowerCase()}</span></div>
+ <div class="kanban">${STAGES.map(s=>{const js=S.jobs.filter(j=>j.stage===s).sort((a,b)=>a.due<b.due?-1:1);return `<div class="col"><h3><span>${stageName(s)}</span><span>${js.length}</span></h3>
+ ${js.map(j=>`<div class="card ${j.due<T&&!['Delivered','Closed'].includes(s)?'late':''}" onclick="openJob('${j.id}')"><b>${j.id}</b><span>${j.title}</span><span class="m">${cust(j.cust).company}</span><span class="m">${t('due')} ${j.due} · ${j.machine}${j.assigned?' · '+j.assigned:''}</span><span class="m"><b>${fmt(jobQuoteTotal(j))}</b></span></div>`).join('')}</div>`}).join('')}</div>`};
+function openJob(id){const j=S.jobs.find(x=>x.id===id);const q=jobQuoteTotal(j),c=jobCost(j);const inv=S.invoices.find(i=>i.job===id);
+ modal(`<div class="row"><h2>${j.id} · ${j.title}</h2><span class="tag right">${stageName(j.stage)}</span></div>
+ <div class="grid2">
+  <label>${t('stage')}<select onchange="S.jobs.find(x=>x.id==='${id}').stage=this.value;persist();openJob('${id}')">${STAGES.map(s=>`<option value="${s}" ${j.stage===s?'selected':''}>${stageName(s)}</option>`).join('')}</select></label>
+  <label>${t('due')}<input type="date" value="${j.due}" onchange="S.jobs.find(x=>x.id==='${id}').due=this.value;persist()"></label>
+  <label>${t('assigned')}<input value="${esc(j.assigned)}" onchange="S.jobs.find(x=>x.id==='${id}').assigned=this.value;persist()"></label>
+  <label>${t('machine')}<select onchange="S.jobs.find(x=>x.id==='${id}').machine=this.value;persist();openJob('${id}')">${Object.keys(S.machines).map(m=>`<option ${j.machine===m?'selected':''}>${m}</option>`).join('')}</select></label>
+  <label>${t('actualMat')}<input type="number" value="${j.mat}" onchange="S.jobs.find(x=>x.id==='${id}').mat=+this.value;persist();openJob('${id}')"></label>
+  <label>${t('machineHrs')} (${S.machines[j.machine]||0}/h)<input type="number" step="0.5" value="${j.machineHrs}" onchange="S.jobs.find(x=>x.id==='${id}').machineHrs=+this.value;persist();openJob('${id}')"></label>
+  <label>${t('labourHrs')} (${S.settings.labour}/h)<input type="number" step="0.5" value="${j.labourHrs}" onchange="S.jobs.find(x=>x.id==='${id}').labourHrs=+this.value;persist();openJob('${id}')"></label>
+ </div>
+ <label>${t('notes')}<textarea onchange="S.jobs.find(x=>x.id==='${id}').notes=this.value;persist()">${esc(j.notes)}</textarea></label>
+ <div class="kpis"><div class="kpi"><div class="v">${fmt(q)}</div><div class="l">${t('quoted')}</div></div><div class="kpi" style="border-color:var(--amber)"><div class="v">${fmt(c)}</div><div class="l">${t('cost')}</div></div><div class="kpi" style="border-color:var(--green)"><div class="v">${q?Math.round((q-c)/q*100):0}%</div><div class="l">${t('margin')} · ${fmt(q-c)}</div></div></div>
+ <div class="row">${inv?`<button class="btn" onclick="openInvoice('${inv.id}')">${inv.id} · <span class="tag ${invStatus(inv).toLowerCase()}">${ts(invStatus(inv))}</span></button>`:`<button class="btn green" onclick="createInvoice('${id}')">${t('createInv')}</button>`}<button class="btn right" onclick="closeModal();render()">${t('cancel')}</button></div>`)}
+function createInvoice(jobId){const j=S.jobs.find(x=>x.id===jobId);const inv={id:'INV-'+S.seq.i,date:today(),job:jobId,cust:j.cust,total:jobQuoteTotal(j),payments:[]};S.seq.i++;S.invoices.unshift(inv);persist();openInvoice(inv.id)}
+
+// ---------------------------------------------------------------- invoices
+VIEWS.invoices=()=>`<div class="topbar"><h1>${t('invoices')}</h1></div><div class="panel"><table><tr><th>${t('ref')}</th><th>${t('date')}</th><th>${t('customer')}</th><th>${t('jobs')}</th><th>${t('total')}</th><th>${t('paid')}</th><th>${t('balance')}</th><th>${t('status')}</th></tr>
+ ${S.invoices.map(i=>{const tt=invTotal(i),p=invPaid(i);return `<tr style="cursor:pointer" onclick="openInvoice('${i.id}')"><td><b>${i.id}</b></td><td class="muted">${i.date}</td><td>${cust(i.cust).company}</td><td>${i.job}</td><td>${fmt(tt)}</td><td>${fmt(p)}</td><td><b>${fmt(tt-p)}</b></td><td><span class="tag ${invStatus(i).toLowerCase()}">${ts(invStatus(i))}</span></td></tr>`}).join('')}</table></div>`;
+function openInvoice(id){const i=S.invoices.find(x=>x.id===id);const tt=invTotal(i),p=invPaid(i);
+ modal(`<div class="row"><h2>${i.id} · ${t('invoiceDoc')}</h2><span class="tag right ${invStatus(i).toLowerCase()}">${ts(invStatus(i))}</span></div>
+ <div class="kpis"><div class="kpi"><div class="v">${fmt(tt)}</div><div class="l">${t('total')}</div></div><div class="kpi" style="border-color:var(--green)"><div class="v">${fmt(p)}</div><div class="l">${t('paid')}</div></div><div class="kpi" style="border-color:var(--amber)"><div class="v">${fmt(tt-p)}</div><div class="l">${t('balance')}</div></div></div>
+ <table><tr><th>${t('date')}</th><th>${t('method')}</th><th>${t('amount')}</th></tr>${i.payments.map(x=>`<tr><td>${x.date}</td><td>${t(x.method)}</td><td>${fmt(x.amount)}</td></tr>`).join('')||`<tr><td colspan=3 class="muted">${t('noData')}</td></tr>`}</table>
+ ${tt-p>0.5?`<div class="row"><label>${t('amount')}<input type="number" id="p_amt" value="${Math.round(tt-p)}" style="width:140px"></label><label>${t('method')}<select id="p_m" style="width:150px"><option value="cash">${t('cash')}</option><option value="card">${t('card')}</option><option value="transfer">${t('transfer')}</option></select></label><button class="btn green" style="align-self:end" onclick="S.invoices.find(x=>x.id==='${id}').payments.push({date:today(),amount:+document.getElementById('p_amt').value,method:document.getElementById('p_m').value});persist();openInvoice('${id}');toast('✓')">${t('recordPay')}</button></div>`:''}
+ <div class="row"><button class="btn ghost" onclick="printInvoice('${id}')">${t('print')}</button><button class="btn right" onclick="closeModal();render()">${t('cancel')}</button></div>`)}
+function printInvoice(id){const i=S.invoices.find(x=>x.id===id);const j=S.jobs.find(x=>x.id===i.job);const q=j&&j.quote?S.quotes.find(x=>x.id===j.quote):null;const c=cust(i.cust);
+ const rows=q?q.lines.map(l=>[l.desc||mat(l.mat).name,mat(l.mat).unit==='sqm'?`${l.w}×${l.h} m`:'',l.qty,fmt(lineTotal(l))]):[[j?j.title:i.job,'',1,fmt(invTotal(i))]];const tt=q?quoteTotals(q):{sub:invTotal(i),disc:0,vat:0,total:invTotal(i)};
+ closeModal();document.getElementById('main').innerHTML=docHtml(t('invoiceDoc'),i.id,i.date,c,rows,tt,q?q.install:0,`${t('paid')}: ${fmt(invPaid(i))} · ${t('balance')}: ${fmt(invTotal(i)-invPaid(i))}. ${t('thanks')}`);setTimeout(()=>{window.print();render()},300)}
+
+// ---------------------------------------------------------------- customers
+VIEWS.customers=()=>`<div class="topbar"><h1>${t('customers')}</h1><button class="btn primary" onclick="openEnquiry()">+ ${t('newEnq')}</button></div><div class="panel"><table><tr><th>${t('name')}</th><th>${t('company')}</th><th>${t('phone')}</th><th>${t('source')}</th><th>${t('jobsCount')}</th><th>${t('spent')}</th></tr>
+ ${S.customers.map(c=>{const js=S.jobs.filter(j=>j.cust===c.id);return `<tr><td><b>${c.name}</b></td><td>${c.company}</td><td>${c.phone}</td><td>${srcName(c.source)}</td><td>${js.length}</td><td>${fmt(js.reduce((a,j)=>a+jobQuoteTotal(j),0))}</td></tr>`}).join('')}</table></div>`;
+
+// ---------------------------------------------------------------- settings
+VIEWS.settings=()=>`<div class="topbar"><h1>${t('settings')}</h1><button class="btn ghost" onclick="if(confirm('Reset demo data?')){S=seed();persist();render()}">Reset demo data</button></div>
+ <div class="two"><div class="panel"><h2>${t('companyName')}</h2><div class="grid2">
+  <label>${t('companyName')}<input value="${esc(S.settings.company)}" onchange="S.settings.company=this.value;persist()"></label><label>C.R.<input value="${esc(S.settings.cr)}" onchange="S.settings.cr=this.value;persist()"></label>
+  <label>${t('phone')}<input value="${esc(S.settings.phone)}" onchange="S.settings.phone=this.value;persist()"></label><label>${t('vatRate')}<input type="number" value="${S.settings.vat}" onchange="S.settings.vat=+this.value;persist()"></label>
+  <label>${t('labourRate')}<input type="number" value="${S.settings.labour}" onchange="S.settings.labour=+this.value;persist()"></label></div>
+  <h2 style="margin-top:18px">${t('machines')}</h2><div class="grid2">${Object.keys(S.machines).map(m=>`<label>${m} (QAR/h)<input type="number" value="${S.machines[m]}" onchange="S.machines['${m}']=+this.value;persist()"></label>`).join('')}</div></div>
+ <div class="panel"><h2>${t('materials')}</h2><table><tr><th>${t('material')}</th><th>${t('unit')}</th><th>${t('ratePer')}</th><th>${t('machine')}</th><th></th></tr>
+  ${S.materials.map((m,i)=>`<tr><td><input value="${esc(m.name)}" onchange="S.materials[${i}].name=this.value;persist()"></td><td><select onchange="S.materials[${i}].unit=this.value;persist()">${['sqm','piece','hour','lm'].map(u=>`<option ${m.unit===u?'selected':''}>${u}</option>`).join('')}</select></td><td><input type="number" value="${m.rate}" onchange="S.materials[${i}].rate=+this.value;persist()"></td><td><select onchange="S.materials[${i}].machine=this.value;persist()">${Object.keys(S.machines).map(x=>`<option ${m.machine===x?'selected':''}>${x}</option>`).join('')}</select></td><td><button class="btn sm ghost" onclick="S.materials.splice(${i},1);persist();render()">×</button></td></tr>`).join('')}</table>
+  <button class="btn sm" style="margin-top:10px" onclick="S.materials.push({id:'m'+uid(),name:'New material',unit:'sqm',rate:100,machine:'Digital print'});persist();render()">+ ${t('addMat')}</button></div></div>`;
+
+// ---------------------------------------------------------------- utils
+function modal(h){document.getElementById('modal').innerHTML=h;document.getElementById('modalbg').classList.add('open')}
+function closeModal(){document.getElementById('modalbg').classList.remove('open')}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+render();
+</script>
+</body>
+</html>
